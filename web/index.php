@@ -39,6 +39,10 @@ function getPartyColor(string $party, array $colors): string {
     return $fallbacks[abs(crc32($party)) % count($fallbacks)];
 }
 
+function normaliseDonor(string $name, array $aliases): string {
+    return $aliases[$name] ?? $name;
+}
+
 $result       = fetchDonationData();
 $donations    = $result["donations"] ?? [];
 $last_updated = $result["last_updated"] ?? null;
@@ -54,6 +58,12 @@ $party_colors = [
     'DemocracyNZ'                             => '#888888',
 ];
 
+$donor_aliases = [
+    'Nicholas Mowbray' => 'Nicholas Mowbray (Zuru)',
+    'Phillip Mills' => 'Phillip Mills (Les Mills)',
+    "GMP Environmental Limited" => 'GMP Environmental Limited (Greymouth Petroleum)',
+];
+
 // --- Aggregate stats ---
 $party_totals = [];
 $donor_totals = [];
@@ -63,7 +73,7 @@ $top_donation = null;
 foreach ($donations as $row) {
     $amt   = parseDollar($row["donation_amount"]);
     $party = trim($row["party"]);
-    $donor = trim($row["donor_name"]);
+    $donor = normaliseDonor(trim($row["donor_name"]), $donor_aliases);
 
     $party_totals[$party] = ($party_totals[$party] ?? 0) + $amt;
     $donor_totals[$donor] = ($donor_totals[$donor] ?? 0) + $amt;
@@ -108,8 +118,8 @@ $donor_values = json_encode(array_values($top_donors));
 <header>
     <div class="header-inner">
         <div class="logo">
-            <h1>NZPT | <span>Financial</span> Dashboard</h1>
-            <small>New Zealand Politics Toolbox &mdash; Tracking Party Finances</small>
+            <h1>Party <span>Financial</span> Dashboard</h1>
+            <small>New Zealand Politics Toolbox (NZPT) &mdash; Tracking Party Finances</small>
         </div>
         <nav>
             <a href="#" class="active">Financial Dashboard</a>
@@ -126,13 +136,13 @@ $donor_values = json_encode(array_values($top_donors));
     <?php else: ?>
 
     <div class="page-header">
-        <h2>Party Donations <em>Exceeding $20,000</em></h2>
+        <h2>NZPol Party Donations <em>Exceeding $20,000</em></h2>
         <div class="meta-row">
             <?php if ($last_updated): ?>
             <span class="badge">Last updated: <span><?= htmlspecialchars($last_updated) ?></span></span>
             <?php endif; ?>
-            <span class="badge">Source: <span>Electoral Commission NZ</span></span>
-            <span class="badge">Year: <span>2026</span></span>
+            <span class="badge">Source: <span>Electoral Commission</span></span>
+            <span class="badge">Voting Year: <span>2026</span></span>
         </div>
     </div>
 
