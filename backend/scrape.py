@@ -19,6 +19,10 @@ from playwright_stealth import stealth
 DB_PATH = "financial.sqlite3"
 URL = "https://elections.nz/democracy-in-nz/political-parties-in-new-zealand/donations-exceeding-20000"
 HEADING_TEXT = "Party donations exceeding $20,000 since 1 January 2026"
+PARTY_ALIASES = {
+    "The Opportunities Party": "Opportunity Party",
+    "Opportunity Party":       "Opportunity Party",
+}
 
 
 def init_db():
@@ -130,10 +134,13 @@ async def scrape():
 
             # Column 1: Party + filing date split by <br>
             col1_parts = [clean(re.sub(r'<[^>]+>', '', part))
-                          for part in re.split(r'<br\s*/?>', cells[0], flags=re.IGNORECASE)]
-            col1_parts = [p for p in col1_parts if p]
+              for part in re.split(r'<br\s*/?>', cells[0], flags=re.IGNORECASE)]
+            col1_parts  = [p for p in col1_parts if p]
             party       = col1_parts[0] if len(col1_parts) > 0 else ''
             filing_date = col1_parts[1] if len(col1_parts) > 1 else ''
+
+            # Normalise party name aliases
+            party = PARTY_ALIASES.get(party, party)
 
             # Skip header rows
             if not party or party.lower().startswith('party'):
