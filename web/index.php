@@ -3,7 +3,7 @@ function fetchDonationData(): array {
     $db_path = __DIR__ . '/financial.sqlite3';
 
     if (!file_exists($db_path)) {
-        return ["error" => "Database not found. Has the scraper run yet?"];
+        return ["error" => "Error 2 Occurred with the code (MISSINGDB). Please email cj@cjs.nz to report this error."]; //Database not found. Has the scraper run yet?
     }
 
     try {
@@ -48,9 +48,8 @@ $party_colors = [
     'The New Zealand National Party'          => '#00529F',
     'New Zealand Labour Party'                => '#CC0000',
     'The Green Party of Aotearoa New Zealand' => '#098137',
-    'New Zealand First Party'                 => '#555555',
+    'New Zealand First Party'                 => '#929090',
     'Te Pāti Māori'                           => '#B22222',
-    'The Opportunities Party'                 => '#6A0DAD',
     'Opportunity Party'                       => '#6A0DAD',
     'DemocracyNZ'                             => '#888888',
 ];
