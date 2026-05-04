@@ -1,41 +1,105 @@
-//IMPORTED FROM URGENCY VIEWER - NOT CURRENTLY IMPLEMENTED AS PART OF FINANCIAL DASHBOARD (but will be)
-// Share button functionality
+// Chart.js configuration for NZPT Financial Dashboard
+// Expects window.NZPT_DATA to be set by PHP before this script runs
+
 document.addEventListener('DOMContentLoaded', () => {
+    const { labels, values, colors, donorLabels, donorValues } = window.NZPT_DATA;
 
-  document.getElementById('share-btn').addEventListener('click', async () => {
-    if (navigator.share) {
-      try {
-        // Fetch the image and convert to a File object
-        const response = await fetch('https://nzpt.cjs.nz/assets/nzptshare.png');
-        const blob = await response.blob();
-        const file = new File([blob], 'nzptshare.png', { type: 'image/png' });
+    const gridColor = 'rgba(255,255,255,0.05)';
+    const tickColor = '#6b7080';
+    const font      = { family: "'DM Mono', monospace", size: 11 };
 
-        // Check the browser can share files before trying
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            title: 'NZPolToolbox – Urgency Tracker',
-            text: 'Check out the latest NZ Parliament urgency statistics. #nzpol',
-            url: 'https://nzpt.cjs.nz',
-            files: [file]
-          });
-        } else {
-          // Browser supports sharing but not files — share without image
-          await navigator.share({
-            title: 'NZPolToolbox – Urgency Tracker',
-            text: 'Check out the latest NZ Parliament urgency statistics. #nzpol via NZPT',
-            url: 'https://nzpt.cjs.nz'
-          });
+    const tooltipDefaults = {
+        backgroundColor: '#1c1f27',
+        borderColor:     '#2a2d38',
+        borderWidth:     1,
+        titleColor:      '#e8eaf0',
+        bodyColor:       '#c9f542',
+        titleFont:       font,
+        bodyFont:        { ...font, size: 13 },
+    };
+
+    // ── Bar chart: total by party ──
+    new Chart(document.getElementById('partyBarChart'), {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [{
+                data: values,
+                backgroundColor: colors.map(c => c + '99'),
+                borderColor:     colors,
+                borderWidth:     1.5,
+                borderRadius:    4,
+            }]
+        },
+        options: {
+            responsive:          true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    ...tooltipDefaults,
+                    callbacks: {
+                        label: ctx => ' $' + ctx.parsed.y.toLocaleString()
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks:  { color: tickColor, font, maxRotation: 30 },
+                    grid:   { color: gridColor },
+                    border: { color: gridColor }
+                },
+                y: {
+                    ticks: {
+                        color: tickColor,
+                        font,
+                        callback: v => '$' + (v >= 1000000
+                            ? (v / 1000000).toFixed(1) + 'M'
+                            : (v / 1000).toFixed(0) + 'K')
+                    },
+                    grid:   { color: gridColor },
+                    border: { color: gridColor }
+                }
+            }
         }
-      } catch (err) {
-        if (err.name !== 'AbortError') {
-          // AbortError just means the user cancelled — ignore it
-          console.error('Share failed:', err);
+    });
+
+    // ── Doughnut chart: share of total ──
+    new Chart(document.getElementById('partyDoughnut'), {
+        type: 'doughnut',
+        data: {
+            labels,
+            datasets: [{
+                data:            values,
+                backgroundColor: colors.map(c => c + 'cc'),
+                borderColor:     '#0b0c0f',
+                borderWidth:     2,
+                hoverOffset:     6,
+            }]
+        },
+        options: {
+            responsive:          true,
+            maintainAspectRatio: false,
+            cutout:              '65%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color:        tickColor,
+                        font,
+                        padding:      12,
+                        boxWidth:     10,
+                        boxHeight:    10,
+                        usePointStyle: true,
+                    }
+                },
+                tooltip: {
+                    ...tooltipDefaults,
+                    callbacks: {
+                        label: ctx => ' $' + ctx.parsed.toLocaleString()
+                    }
+                }
+            }
         }
-      }
-    } else {
-      // Fallback for Firefox desktop etc.
-      await navigator.clipboard.writeText('https://nzpt.cjs.nz');
-      alert('Link copied to clipboard!');
-    }
-  });
+    });
 });

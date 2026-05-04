@@ -25,7 +25,6 @@ body {
     min-height: 100vh;
 }
 
-/* Subtle grid texture */
 body::before {
     content: '';
     position: fixed;
@@ -39,6 +38,7 @@ body::before {
     z-index: 0;
 }
 
+/* ── Header ── */
 header {
     position: relative;
     z-index: 1;
@@ -57,11 +57,7 @@ header {
     gap: 2rem;
 }
 
-.logo {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
+.logo { display: flex; flex-direction: column; gap: 2px; }
 
 .logo h1 {
     font-family: var(--font-display);
@@ -80,10 +76,7 @@ header {
     text-transform: uppercase;
 }
 
-nav {
-    display: flex;
-    gap: 0.25rem;
-}
+nav { display: flex; gap: 0.25rem; }
 
 nav a {
     color: var(--muted);
@@ -98,6 +91,7 @@ nav a {
 nav a:hover { color: var(--text); background: var(--surface2); }
 nav a.active { color: var(--accent); background: rgba(201,245,66,0.08); }
 
+/* ── Main ── */
 main {
     position: relative;
     z-index: 1;
@@ -106,9 +100,8 @@ main {
     padding: 2.5rem 2rem 4rem;
 }
 
-.page-header {
-    margin-bottom: 2.5rem;
-}
+/* ── Page header ── */
+.page-header { margin-bottom: 2.5rem; }
 
 .page-header h2 {
     font-family: var(--font-display);
@@ -118,16 +111,14 @@ main {
     color: var(--text);
 }
 
-.page-header h2 em {
-    font-style: italic;
-    color: var(--accent);
-}
+.page-header h2 em { font-style: italic; color: var(--accent); }
 
 .meta-row {
     display: flex;
     align-items: center;
     gap: 1.5rem;
     margin-top: 0.6rem;
+    flex-wrap: wrap;
 }
 
 .meta-row .badge {
@@ -188,7 +179,7 @@ main {
 .stat-card.accent-card { border-color: rgba(201,245,66,0.3); }
 .stat-card.accent-card .value { color: var(--accent); }
 
-/* ── Charts row ── */
+/* ── Charts ── */
 .charts-grid {
     display: grid;
     grid-template-columns: 1.6fr 1fr;
@@ -212,9 +203,7 @@ main {
     margin-bottom: 1.4rem;
 }
 
-.chart-wrap {
-    position: relative;
-}
+.chart-wrap { position: relative; }
 
 /* ── Bottom grid ── */
 .bottom-grid {
@@ -264,9 +253,130 @@ main {
     font-size: 0.85rem;
 }
 
-/* ...rest unchanged (kept exactly as-is) ... */
+.donations-table thead th {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
 
-/* Fade-in animation */
+.donations-table tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+}
+
+.donations-table tbody tr:last-child { border-bottom: none; }
+.donations-table tbody tr:hover { background: var(--surface2); }
+
+.donations-table td {
+    padding: 0.8rem 1rem;
+    vertical-align: middle;
+}
+
+.donations-table td.amount {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--accent);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.donations-table td.date {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--muted);
+    white-space: nowrap;
+}
+
+.party-pill {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* ── Top donors ── */
+.donor-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.donor-item { display: flex; align-items: center; gap: 0.8rem; }
+
+.donor-rank {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    width: 1.5rem;
+    flex-shrink: 0;
+}
+
+.donor-bar-wrap { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+
+.donor-name-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.donor-name { font-size: 0.85rem; color: var(--text); font-weight: 500; }
+
+.donor-amount { font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent); }
+
+.donor-bar-bg {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.donor-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 1s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ── Party breakdown ── */
+.party-breakdown { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
+
+.party-row { display: flex; align-items: center; gap: 0.8rem; }
+
+.party-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+.party-info { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+
+.party-name-row { display: flex; justify-content: space-between; align-items: baseline; }
+
+.party-name-text { font-size: 0.82rem; color: var(--text); }
+
+.party-total-text { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); }
+
+.party-bar-bg { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+
+.party-bar-fill { height: 100%; border-radius: 2px; }
+
+/* ── Error ── */
+.error-card {
+    background: rgba(245,66,96,0.1);
+    border: 1px solid var(--danger);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    color: var(--danger);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+}
+
+/* ── Animations ── */
 @keyframes fadeUp {
     from { opacity: 0; transform: translateY(16px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -280,3 +390,17 @@ main {
 .stat-card:nth-child(2) { animation-delay: 0.10s; }
 .stat-card:nth-child(3) { animation-delay: 0.15s; }
 .stat-card:nth-child(4) { animation-delay: 0.20s; }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .charts-grid { grid-template-columns: 1fr; }
+    .bottom-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+    .stat-grid { grid-template-columns: 1fr 1fr; }
+    .header-inner { flex-direction: column; align-items: flex-start; }
+    nav { flex-wrap: wrap; }
+    main { padding: 1.5rem 1rem 3rem; }
+}

@@ -29,18 +29,40 @@ function parseDollar(string $amount): float {
     return (float) preg_replace('/[^0-9.]/', '', $amount);
 }
 
-$result = fetchDonationData();
-$donations = $result["donations"] ?? [];
+function getPartyColor(string $party, array $colors): string {
+    foreach ($colors as $name => $color) {
+        if (stripos($party, $name) !== false || stripos($name, $party) !== false) {
+            return $color;
+        }
+    }
+    $fallbacks = ['#E07B39','#3BBFBF','#9B59B6','#E74C3C','#1ABC9C'];
+    return $fallbacks[abs(crc32($party)) % count($fallbacks)];
+}
+
+$result       = fetchDonationData();
+$donations    = $result["donations"] ?? [];
 $last_updated = $result["last_updated"] ?? null;
+
+$party_colors = [
+    'ACT New Zealand'                         => '#FFD700',
+    'The New Zealand National Party'          => '#00529F',
+    'New Zealand Labour Party'                => '#CC0000',
+    'The Green Party of Aotearoa New Zealand' => '#098137',
+    'New Zealand First Party'                 => '#555555',
+    'Te Pāti Māori'                           => '#B22222',
+    'The Opportunities Party'                 => '#6A0DAD',
+    'Opportunity Party'                       => '#6A0DAD',
+    'DemocracyNZ'                             => '#888888',
+];
 
 // --- Aggregate stats ---
 $party_totals = [];
 $donor_totals = [];
-$total_all = 0;
+$total_all    = 0;
 $top_donation = null;
 
 foreach ($donations as $row) {
-    $amt = parseDollar($row["donation_amount"]);
+    $amt   = parseDollar($row["donation_amount"]);
     $party = trim($row["party"]);
     $donor = trim($row["donor_name"]);
 
@@ -57,37 +79,12 @@ arsort($party_totals);
 arsort($donor_totals);
 
 $top_donors = array_slice($donor_totals, 0, 5, true);
-$top_party = array_key_first($party_totals);
+$top_party  = array_key_first($party_totals);
 $num_donors = count(array_unique(array_column($donations, 'donor_name')));
-
-// Party colours
-$party_colors = [
-    'ACT New Zealand'                          => '#FFD700',
-    'The New Zealand National Party'           => '#00529F',
-    'New Zealand Labour Party'                 => '#CC0000',
-    'The Green Party of Aotearoa New Zealand'  => '#098137',
-    'New Zealand First Party'                  => '#000000',
-    'Te Pāti Māori'                            => '#B22222',
-    'The Opportunities Party'                  => '#6A0DAD',
-    'Opportunity Party'                        => '#6A0DAD',
-    'DemocracyNZ'                              => '#888888',
-];
-
-function getPartyColor(string $party, array $colors): string {
-    foreach ($colors as $name => $color) {
-        if (stripos($party, $name) !== false || stripos($name, $party) !== false) {
-            return $color;
-        }
-    }
-    // fallback palette
-    $fallbacks = ['#E07B39','#3BBFBF','#9B59B6','#E74C3C','#1ABC9C'];
-    return $fallbacks[crc32($party) % count($fallbacks)];
-}
 
 $chart_labels = json_encode(array_keys($party_totals));
 $chart_values = json_encode(array_values($party_totals));
 $chart_colors = json_encode(array_map(fn($p) => getPartyColor($p, $party_colors), array_keys($party_totals)));
-
 $donor_labels = json_encode(array_keys($top_donors));
 $donor_values = json_encode(array_values($top_donors));
 ?>
@@ -103,12 +100,12 @@ $donor_values = json_encode(array_values($top_donors));
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <link rel="stylesheet" href="assets/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script defer src="https://cloud.umami.is/script.js" data-website-id="1492dd3b-f626-44b3-a8d5-b074177af097"></script>
-    
 </head>
 <body>
+
 <header>
     <div class="header-inner">
         <div class="logo">
@@ -149,7 +146,7 @@ $donor_values = json_encode(array_values($top_donors));
         </div>
         <div class="stat-card">
             <div class="label">Leading Party</div>
-            <div class="value" style="font-size:1.2rem; line-height:1.3"><?= htmlspecialchars($top_party ?? '—') ?></div>
+            <div class="value" style="font-size:1.2rem;line-height:1.3"><?= htmlspecialchars($top_party ?? '—') ?></div>
             <div class="sub">$<?= number_format($party_totals[$top_party] ?? 0) ?> total</div>
         </div>
         <div class="stat-card">
@@ -182,10 +179,9 @@ $donor_values = json_encode(array_values($top_donors));
 
     <!-- Bottom grid -->
     <div class="bottom-grid">
-        <!-- Top donors -->
         <div class="chart-card">
             <h3>Top donors by total given</h3>
-            <?php $max_donor = max($top_donors ?: [1]); ?>
+            <?php $max_donor = max(array_values($top_donors) ?: [1]); ?>
             <ul class="donor-list">
                 <?php $rank = 1; foreach ($top_donors as $name => $amt): ?>
                 <li class="donor-item">
@@ -204,10 +200,9 @@ $donor_values = json_encode(array_values($top_donors));
             </ul>
         </div>
 
-        <!-- Party breakdown -->
         <div class="chart-card">
             <h3>Party breakdown</h3>
-            <?php $max_party = max($party_totals ?: [1]); ?>
+            <?php $max_party = max(array_values($party_totals) ?: [1]); ?>
             <ul class="party-breakdown">
                 <?php foreach ($party_totals as $party => $amt):
                     $color = getPartyColor($party, $party_colors);
@@ -221,7 +216,7 @@ $donor_values = json_encode(array_values($top_donors));
                             <span class="party-total-text">$<?= number_format($amt) ?> &middot; <?= $pct ?>%</span>
                         </div>
                         <div class="party-bar-bg">
-                            <div class="party-bar-fill" style="width:<?= round($amt / $max_party * 100) ?>%; background:<?= $color ?>"></div>
+                            <div class="party-bar-fill" style="width:<?= round($amt / $max_party * 100) ?>%;background:<?= $color ?>"></div>
                         </div>
                     </div>
                 </li>
@@ -251,16 +246,16 @@ $donor_values = json_encode(array_values($top_donors));
                 <tbody>
                     <?php foreach ($donations as $row):
                         $color = getPartyColor($row["party"], $party_colors);
-                        $bg    = $color . '22'; // ~14% opacity hex
+                        $bg    = $color . '22';
                     ?>
                     <tr>
                         <td>
-                            <span class="party-pill" style="background:<?= $bg ?>; color:<?= $color ?>; border: 1px solid <?= $color ?>44">
+                            <span class="party-pill" style="background:<?= $bg ?>;color:<?= $color ?>;border:1px solid <?= $color ?>44">
                                 <?= htmlspecialchars($row["party"]) ?>
                             </span>
                         </td>
                         <td><?= htmlspecialchars($row["donor_name"]) ?></td>
-                        <td style="color:var(--muted); font-size:0.8rem"><?= htmlspecialchars($row["donor_address"]) ?></td>
+                        <td style="color:var(--muted);font-size:0.8rem"><?= htmlspecialchars($row["donor_address"]) ?></td>
                         <td class="amount"><?= htmlspecialchars($row["donation_amount"]) ?></td>
                         <td class="date"><?= htmlspecialchars($row["donation_date"]) ?></td>
                         <td class="date"><?= htmlspecialchars($row["filing_date"]) ?></td>
@@ -271,112 +266,20 @@ $donor_values = json_encode(array_values($top_donors));
         </div>
     </div>
 
+    <!-- Pass data to JS -->
+    <script>
+    window.NZPT_DATA = {
+        labels:      <?= $chart_labels ?>,
+        values:      <?= $chart_values ?>,
+        colors:      <?= $chart_colors ?>,
+        donorLabels: <?= $donor_labels ?>,
+        donorValues: <?= $donor_values ?>,
+    };
+    </script>
+
     <?php endif; ?>
 </main>
 
-<script>
-const labels  = <?= $chart_labels ?>;
-const values  = <?= $chart_values ?>;
-const colors  = <?= $chart_colors ?>;
-
-const gridColor  = 'rgba(255,255,255,0.05)';
-const tickColor  = '#6b7080';
-const font       = { family: "'DM Mono', monospace", size: 11 };
-
-// Bar chart
-new Chart(document.getElementById('partyBarChart'), {
-    type: 'bar',
-    data: {
-        labels,
-        datasets: [{
-            data: values,
-            backgroundColor: colors.map(c => c + '99'),
-            borderColor: colors,
-            borderWidth: 1.5,
-            borderRadius: 4,
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { display: false },
-            tooltip: {
-                backgroundColor: '#1c1f27',
-                borderColor: '#2a2d38',
-                borderWidth: 1,
-                titleColor: '#e8eaf0',
-                bodyColor: '#c9f542',
-                titleFont: font,
-                bodyFont: { ...font, size: 13 },
-                callbacks: {
-                    label: ctx => ' $' + ctx.parsed.y.toLocaleString()
-                }
-            }
-        },
-        scales: {
-            x: {
-                ticks: { color: tickColor, font, maxRotation: 30 },
-                grid: { color: gridColor },
-                border: { color: gridColor }
-            },
-            y: {
-                ticks: {
-                    color: tickColor,
-                    font,
-                    callback: v => '$' + (v >= 1000000 ? (v/1000000).toFixed(1)+'M' : (v/1000).toFixed(0)+'K')
-                },
-                grid: { color: gridColor },
-                border: { color: gridColor }
-            }
-        }
-    }
-});
-
-// Doughnut chart
-new Chart(document.getElementById('partyDoughnut'), {
-    type: 'doughnut',
-    data: {
-        labels,
-        datasets: [{
-            data: values,
-            backgroundColor: colors.map(c => c + 'cc'),
-            borderColor: '#0b0c0f',
-            borderWidth: 2,
-            hoverOffset: 6,
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        cutout: '65%',
-        plugins: {
-            legend: {
-                position: 'bottom',
-                labels: {
-                    color: tickColor,
-                    font,
-                    padding: 12,
-                    boxWidth: 10,
-                    boxHeight: 10,
-                    usePointStyle: true,
-                }
-            },
-            tooltip: {
-                backgroundColor: '#1c1f27',
-                borderColor: '#2a2d38',
-                borderWidth: 1,
-                titleColor: '#e8eaf0',
-                bodyColor: '#c9f542',
-                titleFont: font,
-                bodyFont: { ...font, size: 13 },
-                callbacks: {
-                    label: ctx => ' $' + ctx.parsed.toLocaleString()
-                }
-            }
-        }
-    }
-});
-</script>
+<script src="assets/script.js"></script>
 </body>
 </html>
