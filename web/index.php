@@ -172,7 +172,7 @@ $donor_values = json_encode(array_values($top_donors));
         <div class="stat-card">
             <div class="label">Largest Single Donation</div>
             <div class="value" style="font-size:1.3rem"><?= htmlspecialchars($top_donation["donation_amount"] ?? '—') ?></div>
-            <div class="sub"><?= htmlspecialchars($top_donation["donor_name"] ?? '') ?></div>
+            <div class="sub"><?= htmlspecialchars($top_donation["donor_name"] ?? '') ?> | <?= htmlspecialchars($top_donation["party"] ?? '') ?></div>
         </div>
     </div>
 
@@ -259,7 +259,7 @@ $donor_values = json_encode(array_values($top_donors));
         <div class="stat-card accent-card">
             <div class="label">Total Loan Value</div>
             <div class="value">$<?= number_format($total_all / 1000000, 2) ?>M</div>
-            <div class="sub"><?= count($donations) ?> donations recorded</div>
+            <div class="sub"><?= count($loans) ?> loans recorded</div>
         </div>
         <div class="stat-card">
             <div class="label">Average Loan Rates</div>
@@ -281,15 +281,15 @@ $donor_values = json_encode(array_values($top_donors));
     <!-- Charts -->
     <div class="charts-grid">
         <div class="chart-card">
-            <h3>Total donations by party</h3>
+            <h3>Total loans by party</h3>
             <div class="chart-wrap" style="height:280px">
-                <canvas id="partyBarChart"></canvas>
+                <canvas id="partyBarChartLoans"></canvas>
             </div>
         </div>
         <div class="chart-card">
-            <h3>Share of total donations</h3>
+            <h3>Share of total loans</h3>
             <div class="chart-wrap" style="height:280px">
-                <canvas id="partyDoughnut"></canvas>
+                <canvas id="partyDoughnutLoans"></canvas>
             </div>
         </div>
     </div>
@@ -297,7 +297,7 @@ $donor_values = json_encode(array_values($top_donors));
     <!-- Bottom grid -->
     <div class="bottom-grid">
         <div class="chart-card">
-            <h3>Top donors by total given</h3>
+            <h3>Top lenders by total loaned</h3>
             <?php $max_donor = max(array_values($top_donors) ?: [1]); ?>
             <ul class="donor-list">
                 <?php $rank = 1; foreach ($top_donors as $name => $amt): ?>
