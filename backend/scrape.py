@@ -16,7 +16,7 @@ from datetime import datetime
 from playwright.async_api import async_playwright
 from playwright_stealth import stealth
 
-DB_PATH = "financial.sqlite3"
+DB_PATH = "/var/www/nzpt/finances/financial.sqlite3"
 URL = "https://elections.nz/democracy-in-nz/political-parties-in-new-zealand/donations-exceeding-20000"
 HEADING_TEXT = "Party donations exceeding $20,000 since 1 January 2026"
 PARTY_ALIASES = {
