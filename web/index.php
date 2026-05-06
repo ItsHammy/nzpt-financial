@@ -102,7 +102,7 @@ $donor_values = json_encode(array_values($top_donors));
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Financial Dashboard — NZPT</title>
+    <title>NZ Political Party Donations 2026 | NZPT Financial Dashboard</title>
     <meta name="description" content="View the donations and loans for each NZ Political Party. Data sourced from Electoral Commission of New Zealand.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -110,8 +110,49 @@ $donor_values = json_encode(array_values($top_donors));
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <link rel="stylesheet" href="assets/style.css">
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+
+    <!-- Chart.js Library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <!-- Umami Analytics -->
     <script defer src="https://cloud.umami.is/script.js" data-website-id="1492dd3b-f626-44b3-a8d5-b074177af097"></script>
+
+    <!-- Open Graph (Facebook, LinkedIn previews) -->
+    <meta property="og:title" content="NZ Political Party Donations 2026 | NZPT Financial Dashboard">
+    <meta property="og:description" content="Track donations exceeding $20,000 to New Zealand political parties in 2026. Data sourced from the Electoral Commission.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://nzpt.cjs.nz/finances">
+    <meta property="og:image" content="https://nzpt.cjs.nz/finances/assets/og-preview.png">
+
+    <!-- Twitter/X card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="NZ Political Party Donations 2026 | NZPT Financial Dashboard">
+    <meta name="twitter:description" content="Track donations exceeding $20,000 to NZ political parties in 2026.">
+    <meta name="twitter:image" content="https://nzpt.cjs.nz/finances/assets/og-preview.png">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://nzpt.cjs.nz/finances">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Dataset",
+        "name": "NZ Political Party Donations 2026",
+        "description": "Donations exceeding $20,000 to registered New Zealand political parties in 2026, sourced from the Electoral Commission of New Zealand.",
+        "url": "https://nzpt.cjs.nz/finances",
+        "license": "https://creativecommons.org/licenses/by/4.0/",
+        "creator": {
+            "@type": "Organization",
+            "name": "NZ Politics Toolbox",
+            "url": "https://nzpt.cjs.nz"
+        },
+        "sourceOrganization": {
+            "@type": "GovernmentOrganization",
+            "name": "Electoral Commission of New Zealand",
+            "url": "https://elections.nz"
+        },
+        "temporalCoverage": "2026"
+    }
+</script>
 </head>
 <body>
 
@@ -152,6 +193,13 @@ $donor_values = json_encode(array_values($top_donors));
         </div>
     </div>
 
+    <!-- SEO-focused introduction -->
+    <p class="seo-intro">
+        This dashboard tracks political donations exceeding $20,000 made to registered 
+        New Zealand parties during the <?= date('Y') ?> election year, as reported to 
+        the Electoral Commission. Data is updated automatically every 30 minutes.
+    </p>
+
     <!-- Stat cards -->
     <div class="stat-grid">
         <div class="stat-card accent-card">
@@ -179,13 +227,25 @@ $donor_values = json_encode(array_values($top_donors));
     <!-- Charts -->
     <div class="charts-grid">
         <div class="chart-card">
-            <h3>Total donations by party</h3>
+            <div class="chart-card-header">
+                <h3>Total donations by party</h3>
+                <button class="btn-download" onclick="downloadChart('partyBarChart', 'nzpt-donations-by-party.png')">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Save PNG
+                </button>
+            </div>
             <div class="chart-wrap" style="height:280px">
                 <canvas id="partyBarChart"></canvas>
             </div>
         </div>
         <div class="chart-card">
-            <h3>Share of total donations</h3>
+            <div class="chart-card-header">
+                <h3>Share of total donations</h3>
+                <button class="btn-download" onclick="downloadChart('partyDoughnut', 'nzpt-donations-share.png')">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Save PNG
+                </button>
+            </div>
             <div class="chart-wrap" style="height:280px">
                 <canvas id="partyDoughnut"></canvas>
             </div>
@@ -239,24 +299,6 @@ $donor_values = json_encode(array_values($top_donors));
             </ul>
         </div>
     </div>
-
-    <!-- END DONATIONS -->
-     <br><hr><br>
-    <!-- START LOANS -->
-     <div class="page-header">
-        <h2>NZPol Party Loans <em>Exceeding $30,000</em></h2>
-        <div class="meta-row">
-            <?php if ($last_updated): ?>
-            <span class="badge">Last updated: <span><?= htmlspecialchars($last_updated) ?></span></span>
-            <?php endif; ?>
-            <span class="badge">Source: <a href="https://elections.nz" target="_blank"><span>Electoral Commission</span></a></span>
-            <span class="badge">Since: <span>December 2023</span></span>
-        </div>
-    </div>
-
-     <div class="error-card">Loan data is currently unavailable. Please check back later.</div>
-
-    <!-- Pass data to JS -->
     <script>
     window.NZPT_DATA = {
         labels:      <?= $chart_labels ?>,
@@ -265,6 +307,25 @@ $donor_values = json_encode(array_values($top_donors));
         donorLabels: <?= $donor_labels ?>,
         donorValues: <?= $donor_values ?>,
     };
+
+    function downloadChart(canvasId, filename) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+
+        // Create a temp canvas with a dark background so the PNG isn't transparent
+        const tmp = document.createElement('canvas');
+        tmp.width  = canvas.width;
+        tmp.height = canvas.height;
+        const ctx  = tmp.getContext('2d');
+        ctx.fillStyle = '#13151a';
+        ctx.fillRect(0, 0, tmp.width, tmp.height);
+        ctx.drawImage(canvas, 0, 0);
+
+        const link    = document.createElement('a');
+        link.download = filename;
+        link.href     = tmp.toDataURL('image/png');
+        link.click();
+    }
     </script>
 
     <?php endif; ?>

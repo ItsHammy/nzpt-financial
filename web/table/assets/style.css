@@ -41,10 +41,11 @@ body::before {
 /* ── Header ── */
 header {
     position: relative;
-    z-index: 1;
+    z-index: 10;
     border-bottom: 1px solid var(--border);
     background: var(--surface);
     padding: 0 2rem;
+    overflow: visible;
 }
 
 .header-inner {
@@ -76,7 +77,7 @@ header {
     text-transform: uppercase;
 }
 
-nav { display: flex; gap: 0.25rem; }
+nav { display: flex; gap: 0.25rem; align-items: center;}
 
 nav a {
     color: var(--muted);
@@ -86,6 +87,66 @@ nav a {
     padding: 0.45rem 0.9rem;
     border-radius: 6px;
     transition: all 0.15s;
+}
+
+.dropdown {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.dropbtn {
+    background: transparent;
+    color: var(--muted);
+    border: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.45rem 0.9rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    transition: all 0.15s;
+}
+
+
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 4px;
+    min-width: 180px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+    overflow: hidden;
+    z-index: 9999;
+    padding: 0.3rem 0;
+}
+
+.dropdown-content a {
+    display: block;
+    padding: 0.7rem 1rem;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.82rem;
+    white-space: nowrap;
+}
+
+.dropdown-content a:hover {
+    background: var(--surface2);
+    color: var(--text);
+}
+
+/* show menu */
+.dropdown:hover .dropdown-content {
+    display: block;
 }
 
 nav a:hover { color: var(--text); background: var(--surface2); }
@@ -194,13 +255,50 @@ main {
     padding: 1.6rem;
 }
 
+.chart-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.4rem;
+}
+
 .chart-card h3 {
     font-family: var(--font-mono);
     font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--muted);
-    margin-bottom: 1.4rem;
+    margin-bottom: 0;
+}
+
+.btn-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.3rem 0.65rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+
+.btn-download:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(248,152,40,0.06);
+}
+
+.btn-download svg {
+    width: 11px;
+    height: 11px;
+    flex-shrink: 0;
 }
 
 .chart-wrap { position: relative; }
@@ -403,4 +501,12 @@ main {
     .header-inner { flex-direction: column; align-items: flex-start; }
     nav { flex-wrap: wrap; }
     main { padding: 1.5rem 1rem 3rem; }
+}
+
+.seo-intro {
+    font-size: 0.9rem;
+    color: var(--muted);
+    max-width: 680px;
+    margin-bottom: 2rem;
+    line-height: 1.7;
 }

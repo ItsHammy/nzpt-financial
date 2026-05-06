@@ -102,7 +102,7 @@ $donor_values = json_encode(array_values($top_donors));
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Financial Dashboard — NZPT</title>
+    <title>View All Party Donations exceeding $20,000 | NZPT</title>
     <meta name="description" content="View the donations and loans for each NZ Political Party. Data sourced from Electoral Commission of New Zealand.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -110,8 +110,49 @@ $donor_values = json_encode(array_values($top_donors));
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <link rel="stylesheet" href="assets/style.css">
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+
+    <!-- Chart.js Library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <!-- Umami Analytics -->
     <script defer src="https://cloud.umami.is/script.js" data-website-id="1492dd3b-f626-44b3-a8d5-b074177af097"></script>
+
+    <!-- Open Graph (Facebook, LinkedIn previews) -->
+    <meta property="og:title" content="View All Party Donations exceeding $20,000 | NZPT">
+    <meta property="og:description" content="Track donations exceeding $20,000 to New Zealand political parties in 2026. Data sourced from the Electoral Commission.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://nzpt.cjs.nz/finances">
+    <meta property="og:image" content="https://nzpt.cjs.nz/finances/assets/og-preview.png">
+
+    <!-- Twitter/X card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="View All Party Donations exceeding $20,000 | NZPT">
+    <meta name="twitter:description" content="Track donations exceeding $20,000 to NZ political parties in 2026.">
+    <meta name="twitter:image" content="https://nzpt.cjs.nz/finances/assets/og-preview.png">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://nzpt.cjs.nz/finances">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Dataset",
+        "name": "NZ Political Party Donations 2026",
+        "description": "Donations exceeding $20,000 to registered New Zealand political parties in 2026, sourced from the Electoral Commission of New Zealand.",
+        "url": "https://nzpt.cjs.nz/finances",
+        "license": "https://creativecommons.org/licenses/by/4.0/",
+        "creator": {
+            "@type": "Organization",
+            "name": "NZ Politics Toolbox",
+            "url": "https://nzpt.cjs.nz"
+        },
+        "sourceOrganization": {
+            "@type": "GovernmentOrganization",
+            "name": "Electoral Commission of New Zealand",
+            "url": "https://elections.nz"
+        },
+        "temporalCoverage": "2026"
+    }
+</script>
 </head>
 <body>
 
@@ -124,7 +165,13 @@ $donor_values = json_encode(array_values($top_donors));
         <nav>
             <a href="../">Financial Dashboard</a>
             <a href="#" class="active">Full Table</a>
-            <a href="https://nzpt.cjs.nz/urgency">Urgency Viewer</a>
+            <div class="dropdown">
+                <button class="dropbtn">NZPT ▾</button>
+                <div class="dropdown-content">
+                    <a href="https://nzpt.cjs.nz">Home</a>
+                    <a href="https://nzpt.cjs.nz/urgency" target="_blank">Urgency Viewer</a>
+                </div>
+            </div>
             <a href="https://cjs.nz/socials" target="_blank">Contact</a>
         </nav>
     </div>

@@ -255,13 +255,50 @@ main {
     padding: 1.6rem;
 }
 
+.chart-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.4rem;
+}
+
 .chart-card h3 {
     font-family: var(--font-mono);
     font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--muted);
-    margin-bottom: 1.4rem;
+    margin-bottom: 0;
+}
+
+.btn-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.3rem 0.65rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+
+.btn-download:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(248,152,40,0.06);
+}
+
+.btn-download svg {
+    width: 11px;
+    height: 11px;
+    flex-shrink: 0;
 }
 
 .chart-wrap { position: relative; }
