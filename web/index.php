@@ -109,7 +109,7 @@ $donor_values = json_encode(array_values($top_donors));
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <link rel="stylesheet" href="assets/style.css">
-    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/ico" href="https://nzpt.cjs.nz/assets/favicon.ico">
 
     <!-- Chart.js Library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
