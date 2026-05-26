@@ -13,7 +13,6 @@ function fetchDonationData(): array {
         $donations = $db->query("
             SELECT party, filing_date, donor_name, donor_address, donation_amount, donation_date
             FROM donations
-            ORDER BY donation_date DESC
         ")->fetchAll(PDO::FETCH_ASSOC);
 
         $meta = $db->query("SELECT value FROM meta WHERE key = 'last_updated'")->fetchColumn();
