@@ -172,6 +172,20 @@ async def scrape():
                 "donation_amount": donation_amount,
                 "donation_date":   donation_date,
             })
+            
+            # fix dates in the format "29 April 2026" to "2026-04-29"
+            try:
+                parsed_date = datetime.strptime(donation_date, "%d %B %Y")
+                donations[-1]["donation_date"] = parsed_date.strftime("%Y-%m-%d")
+
+            except ValueError:
+                print(f"ERROR: Unable to parse date: {donation_date}")
+            
+            try:
+                parsed_date = datetime.strptime(filing_date, "%d %B %Y")
+                donations[-1]["filing_date"] = parsed_date.strftime("%Y-%m-%d")
+            except ValueError:
+                print(f"ERROR: Unable to parse date: {filing_date}")
 
         return donations
 
