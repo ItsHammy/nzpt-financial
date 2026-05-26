@@ -43,6 +43,15 @@ function normaliseDonor(string $name, array $aliases): string {
     return $aliases[$name] ?? $name;
 }
 
+function formatDate(string $date): string {
+    try {
+        $dt = new DateTime($date);
+        return $dt->format('d M Y');
+    } catch (Exception $e) {
+        return htmlspecialchars($date);
+    }
+}
+
 $result       = fetchDonationData();
 $donations    = $result["donations"] ?? [];
 $last_updated = $result["last_updated"] ?? null;
@@ -226,8 +235,8 @@ $donor_values = json_encode(array_values($top_donors));
                         <td><?= htmlspecialchars($row["donor_name"]) ?></td>
                         <td style="color:var(--muted);font-size:0.8rem"><?= htmlspecialchars($row["donor_address"]) ?></td>
                         <td class="amount"><?= htmlspecialchars($row["donation_amount"]) ?></td>
-                        <td class="date"><?= htmlspecialchars($row["donation_date"]) ?></td>
-                        <td class="date"><?= htmlspecialchars($row["filing_date"]) ?></td>
+                        <td class="date"><?= htmlspecialchars(formatDate($row["donation_date"])) ?></td>
+                        <td class="date"><?= htmlspecialchars(formatDate($row["filing_date"])) ?></td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
